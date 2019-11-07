@@ -1,4 +1,4 @@
-package userInteerface;
+package userInterface;
 
 public class Controller {
 	
