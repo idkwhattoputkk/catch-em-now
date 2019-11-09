@@ -9,7 +9,7 @@ ___
 
 **Data**| *Documentation* | 
 --- | --- 
-[*Emmanuel Umaña.*](https://github.com/idkwhattoputkk) | `Documentation`  | 
+[*Emmanuel Umaña.*](https://github.com/idkwhattoputkk) | [`Documentation`](https://github.com/idkwhattoputkk/catch-em-now/tree/master/docs)  | 
 A00351911 | **pdf files are in the project**
 
 
