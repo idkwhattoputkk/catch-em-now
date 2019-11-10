@@ -129,8 +129,8 @@ public class Game {
 		msj = score.giveScores();
 		return msj;
 	}
-	public void saveNewScore(String n) {
-		score.addScore(level, n, numBounces());
+	public void saveNewScore(String string) {
+		score.addScore(level, string, numBounces());
 	}
 	public ArrayList<Balls> getBalls() {
 		return balls;
