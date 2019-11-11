@@ -12,7 +12,7 @@ public class Balls {
 	public final static String UP = "UP"; 
 	public final static String DOWN = "DOWN";
 	static SecureRandom random = new SecureRandom();
-	public final static int MOV = 1 ;
+	public final static int MOV = 1+ random.nextInt(5);
 	
 	
 	// Attributes	
@@ -24,7 +24,7 @@ public class Balls {
 	
 	//methods
 	
-	public void move(int wideAc, int highAc)
+	public void move(boolean wideP, boolean highP)
 	{
 		if(direction.equals(RIGHT)) {
 			posX += MOV;

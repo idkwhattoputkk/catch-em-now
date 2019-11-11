@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -23,6 +24,8 @@ public class Controller {
 
 	@FXML
 	private Pane pane;
+	@FXML
+	private Label lbl;
 	private Game atrapaBalls;
 	
 	//methods
@@ -48,7 +51,10 @@ public class Controller {
 		File f = new File(SCORE_PATH);
 		atrapaBalls.saveGame(f);
 		}catch(Exception e) {
-			e.printStackTrace();
+			Alert error = new Alert(AlertType.ERROR);
+			error.setTitle("no game initialize");
+			error.setContentText("there's no game to save");
+			error.show();
 		}
 		
 	}
@@ -57,14 +63,15 @@ public class Controller {
 			System.exit(0);
 	}
 	public void paintPacmans() {
+		
 			for(int i=0; atrapaBalls.getBalls() !=null && i<atrapaBalls.getBalls().size();i++) {
 				Random rand = new Random();
 				float r = rand.nextFloat();
 				float g = rand.nextFloat();
 				float b = rand.nextFloat();
-				//Color randomColor = new Color(r, g, b);
+				Color randomColor = new Color(r, g, b);
 				Circle c= new Circle();
-				//c.setFill(randomColor);
+				c.setFill(randomColor);
 				double ra = atrapaBalls.getBalls().get(i).getRadious();
 				c.setCenterX(atrapaBalls.getBalls().get(i).getPosX());
 				c.setCenterY(atrapaBalls.getBalls().get(i).getPosY());
@@ -92,9 +99,10 @@ public class Controller {
 		}
 	}
 	private void threadsInitiation(){
+		Bounds bounds = pane.getBoundsInLocal();
 		BallsThread[] threads = new BallsThread[atrapaBalls.getBalls().size()];
 		for (int i = 0; i < threads.length; i++) {
-			threads[i] = new BallsThread(this, atrapaBalls.getBalls().get(i));
+			threads[i] = new BallsThread(this, atrapaBalls.getBalls().get(i),bounds);
 			threads[i].start();
 		}
 	}
@@ -108,23 +116,36 @@ public class Controller {
 	    	info.setHeaderText(null);
 	    	info.setContentText(msj);
 	    	info.show();
-		}catch(Exception e) {
+		}catch(NullPointerException e) {
 			Alert error = new Alert(AlertType.ERROR);
 			error.setTitle("no game initialize");
-			error.setContentText(e.getMessage());
+			error.setContentText("there's no game scores to view");
+			error.show();
 		}
 		
 	}
-	public int getHigh() {
-		Bounds bounds = pane.getBoundsInLocal();
-		int y = (int) (bounds.getMaxY()+bounds.getMinY());
-		return y;
-	}
-	public int getWitgh(){
-		Bounds bounds = pane.getBoundsInLocal();
-		int x = (int) (bounds.getMaxX()+bounds.getMinX());
-		return x;
+	public boolean getHigh(Bounds bounds) {
+		boolean toReturn=false;
+		for(int i=0; atrapaBalls.getBalls() !=null && i<atrapaBalls.getBalls().size();i++) {
+			Balls c = atrapaBalls.getBalls().get(i);
+			if(c.getPosY()<=(bounds.getMinY()+c.getRadious())||
+					(c.getPosY()>=(bounds.getMaxY()-c.getRadious()))) {
+				toReturn=true;
+			}
 		}
+		return toReturn;
+	}
+	public Boolean getWitgh(Bounds bounds){
+		boolean toReturn=false;
+		for(int i=0; atrapaBalls.getBalls() !=null && i<atrapaBalls.getBalls().size();i++) {
+			Balls c = atrapaBalls.getBalls().get(i);
+			if(c.getPosX()<=(bounds.getMinX()+c.getRadious())||
+					(c.getPosX()>=(bounds.getMaxX()-c.getRadious()))) {
+				toReturn=true;
+			}
+		}
+		return toReturn;
+	}
 	public void mouseClicked(MouseEvent e) {
 		if(!atrapaBalls.getBalls().isEmpty())
 			touchThePac(e.getX(), e.getY());
