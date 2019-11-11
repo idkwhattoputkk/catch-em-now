@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Random;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
@@ -18,7 +17,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.FileChooser;
 import threads.BallsThread;
 public class Controller {
 
@@ -26,22 +24,28 @@ public class Controller {
 	private Pane pane;
 	@FXML
 	private Label lbl;
+	private Circle c;
 	private Game atrapaBalls;
 	
 	//methods
+	public void initialize() throws ClassNotFoundException, IOException {
+		atrapaBalls = new Game();
+	}
 	@FXML
 	public void loadGameC(ActionEvent event) throws IOException {
 		try {
-			FileChooser fch= new FileChooser();
-			File f = fch.showOpenDialog(null);
+			initialize();
+			File f = new File("./data"+File.separator+"game.txt");
 			if(f !=null) {
 				atrapaBalls.loadGame(f);
 				threadsInitiation();
-				paintPacmans();
+				paintBalls();
 				lbl.setText("rebotes: "+bounces());
 			}
 		}catch(Exception e) {
-			e.printStackTrace();
+			Alert error = new Alert(AlertType.ERROR);
+			error.setContentText(e.getMessage());
+			error.show();
 		}
 		
 		
@@ -63,23 +67,17 @@ public class Controller {
 	public void leaveGame(ActionEvent event){
 			System.exit(0);
 	}
-	public void paintPacmans() {
-		
-			for(int i=0; atrapaBalls.getBalls() !=null && i<atrapaBalls.getBalls().size();i++) {
-				Random rand = new Random();
-				float r = rand.nextFloat();
-				float g = rand.nextFloat();
-				float b = rand.nextFloat();
-				Color randomColor = new Color(r, g, b);
-				Circle c= new Circle();
-				c.setFill(randomColor);
-				double ra = atrapaBalls.getBalls().get(i).getRadious();
-				c.setCenterX(atrapaBalls.getBalls().get(i).getPosX());
-				c.setCenterY(atrapaBalls.getBalls().get(i).getPosY());
-				c.setRadius(ra);
-				pane.getChildren().addAll(c);
+	public void paintBalls() {
+			for(int i=0;i<atrapaBalls.getBalls().size();i++) {
+				c = new Circle();
+				c.setRadius((double)atrapaBalls.getBalls().get(i).getRadious());
+				c.setLayoutX((double)atrapaBalls.getBalls().get(i).getPosX());
+				c.setLayoutY((double)atrapaBalls.getBalls().get(i).getPosY());
+				c.setFill(Color.YELLOW);
+				c.setStroke(Color.BLACK);
+				c.setStrokeWidth(3);
+				pane.getChildren().add(c);
 			}
-			
 		}
 	public void touchThePac(double x, double y){
 		atrapaBalls.stopBalls(x, y);

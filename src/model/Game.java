@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 
 public class Game {
 	public static final String SCORE_PATH= "./data" + File.separator + "score.txt";
+	public static final String GAME_PATH= "./data" + File.separator + "game.txt";
 	private ArrayList<Balls> balls;
 	private Score score;
 	private int level;
@@ -25,37 +26,37 @@ public class Game {
 	
 	public Game() throws ClassNotFoundException, IOException {
 		balls = new ArrayList<>();
-		score = new Score();
+//		score = new Score();
 		level = 0;
-		loadScore();
 	}
 	public void loadGame(File f) throws IOException {
 		balls.clear();
-		String txt, direction;
-		double posX, posY, radious; 
-		int bounces, wait;
 		try {
-			reader = new BufferedReader(new FileReader(f));
-			txt=reader.readLine();
-			if (txt.startsWith("#nivel")) {
-				level = Integer.parseInt(reader.readLine());
+			FileReader levels = new FileReader(GAME_PATH);
+			BufferedReader br = new BufferedReader(levels);
+			String line = br.readLine();
+			while (line != null) {
+				String[] configuration = line.split("\t");
+				double radious = Integer.parseInt(configuration[0]);
+				double posX = Integer.parseInt(configuration[1]);
+				double posY = Integer.parseInt(configuration[2]);
+				int wait = Integer.parseInt(configuration[3]);
+				String direction = configuration[4];
+				int bounces = Integer.parseInt(configuration[5]);
+				boolean stoped = false;
+				if (configuration[6].equalsIgnoreCase("false")) {
+					stoped = false;
+				} else {
+					stoped = true;
+				}
+				Balls b = new Balls( radious,  posX,  posY,  bounces,  wait,stoped,direction);
+				balls.add(b);
+				line = br.readLine();
 			}
-			if(!txt.startsWith("#")) {
-				String temp[]= txt.split("\t");
-				radious = Double.parseDouble(temp[0]);
-				posX = Double.parseDouble(temp[1]);
-				posY = Double.parseDouble(temp[2]);
-				wait=Integer.parseInt(temp[3]);
-				direction = temp[4];
-				bounces = Integer.parseInt(temp[5]);
-				boolean touched = Boolean.parseBoolean(temp[6]);
-				Balls p = new Balls(radious, posX, posY, bounces, wait, touched, direction);
-				balls.add(p);
-			}
-			
-		}catch(IOException e) {
-			throw new IOException("No se pudo cargar el archivo");
-		}
+			br.close();
+	}catch(Exception e) {
+		throw new IOException();
+	}
 		
 	}
 

@@ -8,7 +8,7 @@
 
 <Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
    <children>
-      <MenuBar prefHeight="2.0" prefWidth="600.0" scaleZ="45.0">
+      <MenuBar prefHeight="2.0" prefWidth="1000000.0" scaleZ="45.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
