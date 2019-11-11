@@ -38,6 +38,7 @@ public class Controller {
 				atrapaBalls.loadGame(f);
 				threadsInitiation();
 				paintPacmans();
+				lbl.setText("rebotes: "+bounces());
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -123,6 +124,13 @@ public class Controller {
 			error.show();
 		}
 		
+	}
+	private int bounces() {
+		int bounces=0;
+		for (int i = 0; i < atrapaBalls.getBalls().size(); i++) {
+			bounces+=atrapaBalls.getBalls().get(i).getBounces();
+		}
+		return bounces;
 	}
 	public boolean getHigh(Bounds bounds) {
 		boolean toReturn=false;

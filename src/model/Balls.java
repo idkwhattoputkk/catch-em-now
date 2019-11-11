@@ -35,7 +35,14 @@ public class Balls {
 		}else if(direction.equals(DOWN)) {
 			posY += MOV;
 		}
-		
+		if(wideP==true) {
+			posX*=MOV;
+			bounces++;
+		}
+		if(highP==true) {
+			posY*=MOV;
+			bounces++;
+		}
 	}
 	public Balls(double radious, double posX, double posY, int bounces, int wait, boolean isTouched, String direction) {
 		super();

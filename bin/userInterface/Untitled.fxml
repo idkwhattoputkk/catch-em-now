@@ -25,6 +25,6 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Label fx:id="lbl" layoutX="14.0" layoutY="36.0" text="Label" />
+      <Label fx:id="lbl" layoutX="14.0" layoutY="36.0" text="rebotes: " />
    </children>
 </Pane>
