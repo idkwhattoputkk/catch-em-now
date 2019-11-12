@@ -40,6 +40,10 @@ public class Controller {
 	void leaveGame(ActionEvent event) {
 		System.exit(0);
 	}
+	@FXML
+	public void aboutTheGame(ActionEvent e) {
+		
+	}
 	public void moveBall(int index) {
 
 		if (balls.get(index).getStop() == false) {

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="803.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="833.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -26,7 +26,8 @@
           </Menu>
           <Menu mnemonicParsing="false" text="View">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" onAction="#getScoresC" text="Scores" />
+                  <MenuItem mnemonicParsing="false" onAction="#aboutTheGame" text="About the game" />
             </items>
           </Menu>
         </menus>
@@ -39,9 +40,9 @@
       <Label fx:id="lbl" prefHeight="34.0" prefWidth="232.0" text="Bounces:  " BorderPane.alignment="CENTER" />
    </bottom>
    <left>
-      <Pane prefHeight="338.0"  prefWidth="0.0" BorderPane.alignment="CENTER" />
+      <Pane prefHeight="338.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
    </left>
    <right>
-      <Pane prefHeight="338.0"  prefWidth="0.0" BorderPane.alignment="CENTER" />
+      <Pane prefHeight="338.0" prefWidth="0.0" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>

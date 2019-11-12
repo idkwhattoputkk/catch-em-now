@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Random;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -84,10 +86,16 @@ public class Ball {
 
 	public void setBall(Circle Bobj) {
 		this.Ball = Bobj;
+		Random rand = new Random();
+		double r = rand.nextDouble();
+		double g = rand.nextDouble();
+		double b = rand.nextDouble();
+		double x = rand.nextDouble();
+		Color randomColor = new Color(r, g, b, x);
 		Bobj.setLayoutX(posX);
 		Bobj.setLayoutY(posY);
 		Bobj.setStroke(Color.BLACK);
-		Bobj.setFill(Color.YELLOW);
+		Bobj.setFill(randomColor);
 	}
 	
 	public String opposite(String direction) {
