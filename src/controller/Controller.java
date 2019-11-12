@@ -1,171 +1,297 @@
 package controller;
 
-import static model.Game.SCORE_PATH;
-import model.*;
+import model.Ball;
+
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.ArrayList;
+
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import threads.BallsThread;
+import model.BestScores;
+import model.Ball;
+import threads.*;
+
 public class Controller {
 
-	@FXML
-	private Pane pane;
-	@FXML
-	private Label lbl;
-	private Game atrapaBalls;
+	@FXML Pane pane;
+	@FXML Label lbl;
+	int level;
+	BestScores bestScores = new BestScores();
+	ArrayList<Ball> balls;
+	boolean stop;
+	int rebounds = 0;
+	boolean charged;
+	private Ball ballc;
 	
-	//methods
-	public void initialize() throws ClassNotFoundException, IOException {
-		atrapaBalls = new Game();
+	// methods
+	public void initialize() {
+		lbl.setText(String.valueOf(rebounds));
 	}
 	@FXML
-	public void loadGameC(ActionEvent event) throws IOException {
-		try {
-			initialize();
-			File f = new File("./data"+File.separator+"game.txt");
-			if(f !=null) {
-				atrapaBalls.loadGame(f);
-				threadsInitiation();
-				paintBalls();
-				lbl.setText("rebotes: "+bounces());
+	void leaveGame(ActionEvent event) {
+		System.exit(0);
+	}
+	public void moveBall(int index) {
+
+		if (balls.get(index).getStop() == false) {
+			if (balls.get(index).getDirection().equals(ballc.UP)) {
+				balls.get(index).getBobj().setLayoutY(balls.get(index).getBobj().getLayoutY() + 18);
 			}
-		}catch(Exception e) {
-			Alert error = new Alert(AlertType.ERROR);
-			error.setContentText(e.getMessage());
-			error.show();
-		}
-		
-		
-	}
-	@FXML
-	public void saveGameC(ActionEvent event) throws FileNotFoundException, IOException {
-		try {
-		File f = new File(SCORE_PATH);
-		atrapaBalls.saveGame(f);
-		}catch(Exception e) {
-			Alert error = new Alert(AlertType.ERROR);
-			error.setTitle("no game initialize");
-			error.setContentText("there's no game to save");
-			error.show();
-		}
-		
-	}
-	@FXML
-	public void leaveGame(ActionEvent event){
-			System.exit(0);
-	}
-	public void paintBalls() {
-		Circle[] c = new Circle[atrapaBalls.getBalls().size()];
-			for(int i=0;i<atrapaBalls.getBalls().size();i++) {
-				Circle a = new Circle();
-				a.setRadius((double)atrapaBalls.getBalls().get(i).getRadious());
-				a.setLayoutX((double)atrapaBalls.getBalls().get(i).getPosX());
-				a.setLayoutY((double)atrapaBalls.getBalls().get(i).getPosY());
-				a.setFill(Color.RED);
-				c[i]=a;
+			if (balls.get(index).getDirection().equals(ballc.DOWN)) {
+				balls.get(index).getBobj().setLayoutY(balls.get(index).getBobj().getLayoutY() - 18);
 			}
-			loadCircles(c);
-	}
-	private void loadCircles(Circle[] c) {
-		for (int i = 0; i < c.length; i++) {
-			pane.getChildren().add(c[i]);
+			if (balls.get(index).getDirection().equals(ballc.RIGHT)) {
+				balls.get(index).getBobj().setLayoutX(balls.get(index).getBobj().getLayoutX() - 18);
+			}
+			if (balls.get(index).getDirection().equals(ballc.LEFT)) {
+				balls.get(index).getBobj().setLayoutX(balls.get(index).getBobj().getLayoutX() + 18);
+			}
+
+			if (balls.get(index).getBobj().getLayoutX() > pane.getWidth()) {
+				balls.get(index).setDirection(balls.get(index).opposite(balls.get(index).getDirection()));
+				balls.get(index).setRebounds(balls.get(index).getRebounds() + 1);
+				rebounds++;
+			}
+
+			if (balls.get(index).getBobj().getLayoutX() < 0) {
+				balls.get(index).setDirection(balls.get(index).opposite(balls.get(index).getDirection()));
+				rebounds++;
+			}
+
+			if (balls.get(index).getBobj().getLayoutY() > pane.getHeight()) {
+				balls.get(index).setDirection(balls.get(index).opposite(balls.get(index).getDirection()));
+				balls.get(index).setRebounds(balls.get(index).getRebounds() + 1);
+				rebounds++;
+			}
+
+			if (balls.get(index).getBobj().getLayoutY() < 0) {
+				balls.get(index).setDirection(balls.get(index).opposite(balls.get(index).getDirection()));
+				balls.get(index).setRebounds(balls.get(index).getRebounds() + 1);
+				rebounds++;
+			}
 		}
+		setRebounds();
 	}
-	public void touchThePac(double x, double y){
-		atrapaBalls.stopBalls(x, y);
-		if(atrapaBalls.endGame()){
-				int thisScore = atrapaBalls.numBounces();
-				TextInputDialog t = new TextInputDialog();
-				t.setTitle("Hall of Fame");
-				t.setContentText("Su puntaje de: "+thisScore+" es uno de los 10 mejores.\nPor favor digite su name para el Hall de la Fama: ");
-				Optional<String> result =t.showAndWait();
-				if(result.isPresent()&&result.get().toString().length()!=0) {
-					atrapaBalls.saveNewScore(result.get());
-				}else {
-					Alert a = new Alert(AlertType.ERROR);
-					a.setContentText("Digite un nombre valido");
-					a.show();
-					
+	private void setRebounds() {
+		if(charged != false) {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					lbl.setText(String.valueOf(rebounds));
 				}
+			});
 		}
 	}
-	private void threadsInitiation(){
-		Bounds bounds = pane.getBoundsInLocal();
-		BallsThread[] threads = new BallsThread[atrapaBalls.getBalls().size()];
-		for (int i = 0; i < threads.length; i++) {
-			threads[i] = new BallsThread(this, atrapaBalls.getBalls().get(i),bounds);
-			threads[i].start();
+	public void Colision() {
+	double distancia = 0;
+	double cx1 = 0;
+	double cy1 = 0;
+	double r1 = 0;
+	double cx2 = 0;
+	double cy2 = 0;
+	double r2 = 0;
+	for (int i = 0; i < balls.size(); i++) {
+		for (int j = 0; j < balls.size(); j++) {
+			if (balls.get(i) != balls.get(j)) {
+				if (balls.get(i).getBobj().getCenterX() > balls.get(j).getBobj().getCenterX()
+						&& balls.get(i).getBobj().getCenterY() > balls.get(j).getBobj().getCenterY()) {
+					cx1 = balls.get(i).getBobj().getLayoutX();
+					cy1 = balls.get(i).getBobj().getLayoutY();
+					r1 = balls.get(i).getBobj().getRadius();
+					cx2 = balls.get(j).getBobj().getLayoutX();
+					cy2 = balls.get(j).getBobj().getLayoutY();
+					r2 = balls.get(j).getBobj().getRadius();
+				} else {
+					cx1 = balls.get(j).getBobj().getLayoutX();
+					cy1 = balls.get(j).getBobj().getLayoutY();
+					r1 = balls.get(j).getBobj().getRadius();
+					cx2 = balls.get(i).getBobj().getLayoutX();
+					cy2 = balls.get(i).getBobj().getLayoutY();
+					r2 = balls.get(i).getBobj().getRadius();
+				}
+				distancia = Math.sqrt((cx1 - cx2) * (cx1 - cx2) + (cy1 - cy2) * (cy1 - cy2));
+				if (distancia < r1 + r2) {
+					if (balls.get(i).getDirection().equals(ballc.UP)) {
+						balls.get(i).getBobj().setLayoutY(balls.get(i).getBobj().getLayoutY()
+								- (balls.get(i).getBobj().getRadius() + 6));
+					}
+					if (balls.get(i).getDirection().equals(ballc.DOWN)) {
+						balls.get(i).getBobj().setLayoutY(balls.get(i).getBobj().getLayoutY()
+								+ (balls.get(i).getBobj().getRadius() + 6));
+					}
+					if (balls.get(i).getDirection().equals(ballc.RIGHT)) {
+						balls.get(i).getBobj().setLayoutX(balls.get(i).getBobj().getLayoutX()
+								+ (balls.get(i).getBobj().getRadius() + 6));
+					}
+					if (balls.get(i).getDirection().equals(ballc.LEFT)) {
+						balls.get(i).getBobj().setLayoutX(balls.get(i).getBobj().getLayoutX()
+								- (balls.get(i).getBobj().getRadius() + 6));
+					}
+					if (balls.get(j).getDirection().equals(ballc.UP)) {
+						balls.get(j).getBobj().setLayoutY(balls.get(i).getBobj().getLayoutY()
+								- (balls.get(i).getBobj().getRadius() + 6));
+					}
+					if (balls.get(j).getDirection().equals(ballc.DOWN)) {
+						balls.get(j).getBobj().setLayoutY(balls.get(i).getBobj().getLayoutY()
+								+ (balls.get(i).getBobj().getRadius() + 6));
+					}
+					if (balls.get(j).getDirection().equals(ballc.RIGHT)) {
+						balls.get(j).getBobj().setLayoutX(balls.get(i).getBobj().getLayoutX()
+								+ (balls.get(i).getBobj().getRadius() + 6));
+					}
+					if (balls.get(j).getDirection().equals(ballc.LEFT)) {
+						balls.get(j).getBobj().setLayoutX(balls.get(i).getBobj().getLayoutX()
+								- (balls.get(i).getBobj().getRadius() + 6));
+					}
+					balls.get(i).setDirection(balls.get(i).opposite(balls.get(i).getDirection()));
+					balls.get(j).setDirection(balls.get(j).opposite(balls.get(j).getDirection()));
+				}
+			}
+		}
+	}
+	}
+	public ArrayList<Ball> getBalls() {
+		return balls;
+	}
+	@FXML
+	public void levelZero(ActionEvent event) {
+		level = 0;
+		loadGame();
+	}
+
+	@FXML
+	public void levelOne(ActionEvent event) {
+		level = 1;
+		loadGame();
+	}
+	@FXML
+	void getScoresC(ActionEvent event) {
+		Alert a = new Alert(AlertType.INFORMATION); 
+		a.setTitle("Best Scores");
+		a.setContentText(bestScores.messageScore());
+		a.showAndWait();
+	}
+	@FXML
+	public void onPressed(MouseEvent event) {
+	try {
+		for (int i = 0; i < balls.size(); i++) {
+			if (balls.get(i).getStop() != true) {
+				double x = balls.get(i).getBobj().getLayoutX();
+				double y = balls.get(i).getBobj().getLayoutY();
+				double r = balls.get(i).getRadius();
+
+				if (event.getSceneX() < (x + r + 100) && event.getSceneX() > (x - r)
+						&& event.getSceneY() < (y + r + 100) && event.getSceneY() > (y - r)) {
+					balls.get(i).setStop(true);
+				}
+			}
+		}
+	} catch (RuntimeException e) {
+		Alert a = new Alert(AlertType.ERROR); 
+		a.setTitle("Error");
+		a.setContentText("No existe ningun pacman para atrapar aun.");
+		a.show();
+	}
+	}
+	@FXML
+	void loadGame() {
+		charged = false;
+		stop = true;
+		rebounds = 0;
+		pane.getChildren().clear();
+		balls = new ArrayList<Ball>();
+		String filePath = "";
+		BufferedReader br = null;
+		FileReader fr = null;
+
+		if (level == 0) {
+			filePath = "data"+File.separator+"Lv0.txt";
+		} else if (level == 1) {
+			filePath = "data"+File.separator+"Lv1.txt";
+		} else if (level == 2)
+			filePath = "data"+File.separator+"Lv2.txt";
+
+		try {
+			fr = new FileReader(filePath);
+			br = new BufferedReader(fr);
+
+			String sCurrentLine;
+
+			while ((sCurrentLine = br.readLine()) != null) {
+
+				if (sCurrentLine.charAt(0) != '#') {
+					if (sCurrentLine.length() > 1) {
+						String[] parts = sCurrentLine.split(" ");
+						double radius = Double.parseDouble(parts[0]);
+						double x = Double.parseDouble(parts[1]);
+						double y = Double.parseDouble(parts[2]);
+						int wait = Integer.parseInt(parts[3]);
+						String direction = parts[4];
+						int rebounds = Integer.parseInt(parts[5]);
+						boolean stopped = Boolean.parseBoolean(parts[5]);
+						ballc = new Ball(radius, x, y, direction, wait, rebounds, stopped);
+						balls.add(ballc);
+					} else {
+						level = Integer.parseInt(sCurrentLine);
+					}
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (br != null)
+					br.close();
+
+				if (fr != null)
+					fr.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		charged = true;
+		startGame();
+	}
+	void startGame() {
+		if (charged) {
+			for (int i = 0; i < balls.size(); i++) {
+				pane.getChildren().add(balls.get(i).getBobj());
+			}
+			stop = false;
+			threadMoveBall moveB = new threadMoveBall(this);
+			threadColision threadColision = new threadColision(this);
+			moveB.setDaemon(true);
+			threadColision.setDaemon(true);
+			moveB.start();
+			threadColision.start();
 		}
 	}
 	@FXML
-	public void getScoresC(ActionEvent event) {
-		try{
-			String msj="";
-			msj = atrapaBalls.getScores();
-			Alert info = new Alert(AlertType.CONFIRMATION);
-	    	info.setTitle("Best Scores");
-	    	info.setHeaderText(null);
-	    	info.setContentText(msj);
-	    	info.show();
-		}catch(NullPointerException e) {
-			Alert error = new Alert(AlertType.ERROR);
-			error.setTitle("no game initialize");
-			error.setContentText("there's no game scores to view");
-			error.show();
-		}
-		
+	public void levelTwo(ActionEvent event) {
+		level = 2;
+		loadGame();
 	}
-	private int bounces() {
-		int bounces=0;
-		for (int i = 0; i < atrapaBalls.getBalls().size(); i++) {
-			bounces+=atrapaBalls.getBalls().get(i).getBounces();
-		}
-		return bounces;
+	
+	public boolean getStop() {
+		return stop;
 	}
-	public boolean getHigh(Bounds bounds) {
-		boolean toReturn=false;
-		for(int i=0; atrapaBalls.getBalls() !=null && i<atrapaBalls.getBalls().size();i++) {
-			Balls c = atrapaBalls.getBalls().get(i);
-			if(c.getPosY()<=(bounds.getMinY()+c.getRadious())||
-					(c.getPosY()>=(bounds.getMaxY()-c.getRadious()))) {
-				toReturn=true;
-			}
-		}
-		return toReturn;
-	}
-	public Boolean getWitgh(Bounds bounds){
-		boolean toReturn=false;
-		for(int i=0; atrapaBalls.getBalls() !=null && i<atrapaBalls.getBalls().size();i++) {
-			Balls c = atrapaBalls.getBalls().get(i);
-			if(c.getPosX()<=(bounds.getMinX()+c.getRadious())||
-					(c.getPosX()>=(bounds.getMaxX()-c.getRadious()))) {
-				toReturn=true;
-			}
-		}
-		return toReturn;
-	}
-	public void mouseClicked(MouseEvent e) {
-		if(!atrapaBalls.getBalls().isEmpty())
-			touchThePac(e.getX(), e.getY());
+	
+	public int getLevel() {
+		return level;
 	}
 	@FXML
-	void AboutGame(ActionEvent event){
-		Alert info = new Alert(AlertType.CONFIRMATION);
-    	info.setTitle("About capture the catch-em-now");
-    	info.setHeaderText(null);
-    	info.setContentText("To win you have to stop all the circles \n as fast as you can");
-    	info.show();
+	public void saveGame(ActionEvent e) {
+		//TODO
 	}
+	
 }

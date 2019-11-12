@@ -4,27 +4,44 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
-   <children>
-      <MenuBar prefHeight="2.0" prefWidth="1000000.0" scaleZ="45.0">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="803.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#loadGameC" text="Load game" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveGameC" text="Save  game" />
-                  <MenuItem mnemonicParsing="false" onAction="#leaveGame" text="Close" />
-            </items>
+               <items>
+                  <Menu mnemonicParsing="false" text="Game">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#levelZero" text="load game 1" />
+                        <MenuItem mnemonicParsing="false" onAction="#levelOne" text="load game 2" />
+                        <MenuItem mnemonicParsing="false" onAction="#levelTwo" text="load game 3" />
+                    </items>
+                  </Menu>
+                  <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Save game" />
+                  <MenuItem mnemonicParsing="false" onAction="#leaveGame" text="leave game" />
+               </items>
           </Menu>
           <Menu mnemonicParsing="false" text="View">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#getScoresC" text="Best scores" />
-                  <MenuItem mnemonicParsing="false" onAction="#AboutGame" text="About the game" />
+              <MenuItem mnemonicParsing="false" text="Delete" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
-      <Label fx:id="lbl" layoutX="14.0" layoutY="36.0" text="rebotes: " />
-   </children>
-</Pane>
+   </top>
+   <center>
+      <Pane fx:id="pane" onMousePressed="#onPressed" prefHeight="338.0" prefWidth="451.0" BorderPane.alignment="CENTER" />
+   </center>
+   <bottom>
+      <Label fx:id="lbl" prefHeight="34.0" prefWidth="232.0" text="Bounces:  " BorderPane.alignment="CENTER" />
+   </bottom>
+   <left>
+      <Pane prefHeight="338.0"  prefWidth="0.0" BorderPane.alignment="CENTER" />
+   </left>
+   <right>
+      <Pane prefHeight="338.0"  prefWidth="0.0" BorderPane.alignment="CENTER" />
+   </right>
+</BorderPane>
