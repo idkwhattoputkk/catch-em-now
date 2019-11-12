@@ -24,7 +24,6 @@ public class Controller {
 	private Pane pane;
 	@FXML
 	private Label lbl;
-	private Circle c;
 	private Game atrapaBalls;
 	
 	//methods
@@ -68,17 +67,22 @@ public class Controller {
 			System.exit(0);
 	}
 	public void paintBalls() {
+		Circle[] c = new Circle[atrapaBalls.getBalls().size()];
 			for(int i=0;i<atrapaBalls.getBalls().size();i++) {
-				c = new Circle();
-				c.setRadius((double)atrapaBalls.getBalls().get(i).getRadious());
-				c.setLayoutX((double)atrapaBalls.getBalls().get(i).getPosX());
-				c.setLayoutY((double)atrapaBalls.getBalls().get(i).getPosY());
-				c.setFill(Color.YELLOW);
-				c.setStroke(Color.BLACK);
-				c.setStrokeWidth(3);
-				pane.getChildren().add(c);
+				Circle a = new Circle();
+				a.setRadius((double)atrapaBalls.getBalls().get(i).getRadious());
+				a.setLayoutX((double)atrapaBalls.getBalls().get(i).getPosX());
+				a.setLayoutY((double)atrapaBalls.getBalls().get(i).getPosY());
+				a.setFill(Color.RED);
+				c[i]=a;
 			}
+			loadCircles(c);
+	}
+	private void loadCircles(Circle[] c) {
+		for (int i = 0; i < c.length; i++) {
+			pane.getChildren().add(c[i]);
 		}
+	}
 	public void touchThePac(double x, double y){
 		atrapaBalls.stopBalls(x, y);
 		if(atrapaBalls.endGame()){

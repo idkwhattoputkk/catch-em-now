@@ -20,6 +20,7 @@ public class BallsThread extends Thread{
 		while(!b.isTouched()) {
 			try {
 				b.move(c.getWitgh(bounds),c.getHigh(bounds));
+				c.paintBalls();
 				Thread.sleep(b.getWait());
 			}catch(Exception e) {
 				e.printStackTrace();
