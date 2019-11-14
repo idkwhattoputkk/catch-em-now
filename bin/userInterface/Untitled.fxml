@@ -5,6 +5,7 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="833.0" prefWidth="1440.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Controller">
@@ -37,7 +38,12 @@
       <Pane fx:id="pane" onMousePressed="#onPressed" prefHeight="338.0" prefWidth="451.0" BorderPane.alignment="CENTER" />
    </center>
    <bottom>
-      <Label fx:id="lbl" prefHeight="34.0" prefWidth="232.0" text="Bounces:  " BorderPane.alignment="CENTER" />
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="lxl" prefHeight="35.0" prefWidth="302.0" text="Bounces:" />
+            <Label fx:id="lbl" alignment="CENTER" prefHeight="34.0" prefWidth="196.0" text="x" />
+         </children>
+      </HBox>
    </bottom>
    <left>
       <Pane prefHeight="338.0" prefWidth="0.0" BorderPane.alignment="CENTER" />

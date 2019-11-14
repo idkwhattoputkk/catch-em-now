@@ -3,5 +3,11 @@
 	-fx-text-fill: black;
     -fx-font-family: "Arial Narrow";
     -fx-font-weight: bold;
+    -fx-font-size: 40px;
+}
+#lxl{
+	-fx-text-fill: black;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
     -fx-font-size: 30px;
 }
